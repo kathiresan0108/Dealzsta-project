@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  Alert,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -27,15 +37,24 @@ export default function EditProfile() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleAvatarChange = () => {
-    // Simulate avatar picker
-    const sampleAvatars = [
-      'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-      'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-      'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
-    ];
-    const newAvatar = sampleAvatars[Math.floor(Math.random() * sampleAvatars.length)];
-    handleInputChange('avatar', newAvatar);
+  const handleAvatarChange = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'We need access to your gallery to change your photo.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      const selectedAsset = result.assets[0];
+      handleInputChange('avatar', selectedAsset.uri);
+    }
   };
 
   const handleSave = async () => {
@@ -44,9 +63,7 @@ export default function EditProfile() {
         title: 'Error',
         message: 'Name is required',
         type: 'error',
-        buttons: [
-          { text: 'OK', style: 'primary', onPress: () => setShowPopup(false) }
-        ]
+        buttons: [{ text: 'OK', style: 'primary', onPress: () => setShowPopup(false) }],
       });
       setShowPopup(true);
       return;
@@ -59,11 +76,15 @@ export default function EditProfile() {
         message: 'Profile updated successfully!',
         type: 'success',
         buttons: [
-          { text: 'OK', style: 'primary', onPress: () => {
-            setShowPopup(false);
-            router.back();
-          }}
-        ]
+          {
+            text: 'OK',
+            style: 'primary',
+            onPress: () => {
+              setShowPopup(false);
+              router.back();
+            },
+          },
+        ],
       });
       setShowPopup(true);
     } catch (error) {
@@ -71,9 +92,7 @@ export default function EditProfile() {
         title: 'Error',
         message: 'Failed to update profile. Please try again.',
         type: 'error',
-        buttons: [
-          { text: 'OK', style: 'primary', onPress: () => setShowPopup(false) }
-        ]
+        buttons: [{ text: 'OK', style: 'primary', onPress: () => setShowPopup(false) }],
       });
       setShowPopup(true);
     }
@@ -114,9 +133,16 @@ export default function EditProfile() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: theme.text }]}>Name</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.surface,
+                  color: theme.text,
+                  borderColor: theme.border,
+                },
+              ]}
               value={formData.name}
-              onChangeText={(value) => handleInputChange('name', value)}
+              onChangeText={value => handleInputChange('name', value)}
               placeholder="Enter your name"
               placeholderTextColor={theme.textSecondary}
             />
@@ -125,9 +151,16 @@ export default function EditProfile() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: theme.text }]}>Bio</Text>
             <TextInput
-              style={[styles.textArea, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]}
+              style={[
+                styles.textArea,
+                {
+                  backgroundColor: theme.surface,
+                  color: theme.text,
+                  borderColor: theme.border,
+                },
+              ]}
               value={formData.bio}
-              onChangeText={(value) => handleInputChange('bio', value)}
+              onChangeText={value => handleInputChange('bio', value)}
               placeholder="Tell us about yourself"
               placeholderTextColor={theme.textSecondary}
               multiline
@@ -138,9 +171,16 @@ export default function EditProfile() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: theme.text }]}>Email</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.surface,
+                  color: theme.text,
+                  borderColor: theme.border,
+                },
+              ]}
               value={formData.email}
-              onChangeText={(value) => handleInputChange('email', value)}
+              onChangeText={value => handleInputChange('email', value)}
               placeholder="Enter your email"
               placeholderTextColor={theme.textSecondary}
               keyboardType="email-address"
@@ -151,9 +191,16 @@ export default function EditProfile() {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: theme.text }]}>Phone</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: theme.surface,
+                  color: theme.text,
+                  borderColor: theme.border,
+                },
+              ]}
               value={formData.phone}
-              onChangeText={(value) => handleInputChange('phone', value)}
+              onChangeText={value => handleInputChange('phone', value)}
               placeholder="Enter your phone number"
               placeholderTextColor={theme.textSecondary}
               keyboardType="phone-pad"
@@ -175,9 +222,7 @@ export default function EditProfile() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -186,34 +231,13 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
   },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  saveButton: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  avatarSection: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: 8,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
+  backButton: { padding: 8 },
+  headerTitle: { fontSize: 18, fontWeight: '600' },
+  saveButton: { fontSize: 16, fontWeight: '600' },
+  content: { flex: 1, padding: 16 },
+  avatarSection: { alignItems: 'center', marginBottom: 32 },
+  avatarContainer: { position: 'relative', marginBottom: 8 },
+  avatar: { width: 100, height: 100, borderRadius: 50 },
   avatarPlaceholder: {
     width: 100,
     height: 100,
@@ -231,22 +255,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  changePhotoText: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  section: {
-    padding: 16,
-    borderRadius: 12,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-  },
+  changePhotoText: { fontSize: 16, fontWeight: '500' },
+  section: { padding: 16, borderRadius: 12 },
+  inputGroup: { marginBottom: 20 },
+  label: { fontSize: 16, fontWeight: '500', marginBottom: 8 },
   input: {
     height: 50,
     borderWidth: 1,

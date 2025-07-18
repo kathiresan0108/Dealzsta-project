@@ -1,0 +1,45 @@
+{
+  "cli": {
+    "version": ">= 16.8.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      },
+      "env": {
+        "MY_SECRET_KEY": "dev_key_here",
+        "EXPO_NO_FLIPPER": "1"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "MY_SECRET_KEY": "preview_key_here",
+        "EXPO_NO_FLIPPER": "1"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "aab",
+        "gradleCommand": ":app:bundleRelease"
+      },
+      "env": {
+        "MY_SECRET_KEY": "prod_key_here",
+        "EXPO_NO_FLIPPER": "1"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

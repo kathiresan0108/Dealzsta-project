@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSavedPosts } from '@/context/SavedPostsContext';
 import { useRouter } from 'expo-router';
 import { Settings, Edit, Grid, Bookmark } from 'lucide-react-native';
 import { generateSamplePosts } from '@/utils/sampleData';
@@ -13,7 +14,70 @@ export default function Profile() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { savedPosts, loading } = useSavedPosts();
   const router = useRouter();
+
+  const handlePostPress = (post) => {
+    router.push(`/post/${post.id}`);
+  };
+
+  // Navigation handlers for followers/following
+  const handleFollowersPress = () => {
+    router.push({
+      pathname: '/followers-following',
+      params: { 
+        tab: 'followers',
+        userId: user?.id 
+      }
+    });
+  };
+
+  const handleFollowingPress = () => {
+    router.push({
+      pathname: '/followers-following',
+      params: { 
+        tab: 'following',
+        userId: user?.id 
+      }
+    });
+  };
+
+  const renderPostsGrid = (posts) => {
+    if (posts.length === 0) {
+      return (
+        <View style={styles.emptyState}>
+          <Grid size={64} color={theme.textSecondary} />
+          <Text style={[styles.emptyStateText, { color: theme.textSecondary }]}>
+            {activeTab === 'posts' ? 'No posts yet' : 'No saved posts yet'}
+          </Text>
+          <Text style={[styles.emptyStateSubtext, { color: theme.textSecondary }]}>
+            {activeTab === 'posts' 
+              ? 'Share your first post to get started!' 
+              : 'Posts you save will appear here'}
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.postsGrid}>
+        {posts.map((post, index) => (
+          <TouchableOpacity
+            key={`${post.id}-${index}`}
+            style={styles.postItem}
+            onPress={() => handlePostPress(post)}
+          >
+            <Image source={{ uri: post.image }} style={styles.postImage} />
+            {activeTab === 'saved' && (
+              <View style={styles.savedIndicator}>
+                <Bookmark size={16} color="#fff" fill="#fff" />
+              </View>
+            )}
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -32,17 +96,21 @@ export default function Profile() {
             
             <View style={styles.statsContainer}>
               <View style={styles.stat}>
-                <Text style={[styles.statNumber, { color: theme.text }]}>{user?.posts || 0}</Text>
-                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.posts}</Text>
+                <Text style={[styles.statNumber, { color: theme.text }]}>{userPosts.length}</Text>
+                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.posts || 'Posts'}</Text>
               </View>
-              <View style={styles.stat}>
+              
+              {/* Clickable Followers */}
+              <TouchableOpacity style={styles.stat} onPress={handleFollowersPress}>
                 <Text style={[styles.statNumber, { color: theme.text }]}>{user?.followers || 0}</Text>
-                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.followers}</Text>
-              </View>
-              <View style={styles.stat}>
+                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.followers || 'Followers'}</Text>
+              </TouchableOpacity>
+              
+              {/* Clickable Following */}
+              <TouchableOpacity style={styles.stat} onPress={handleFollowingPress}>
                 <Text style={[styles.statNumber, { color: theme.text }]}>{user?.following || 0}</Text>
-                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.following}</Text>
-              </View>
+                <Text style={[styles.statLabel, { color: theme.textSecondary }]}>{t.following || 'Following'}</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -58,7 +126,7 @@ export default function Profile() {
             onPress={() => router.push('/edit-profile')}
           >
             <Edit size={16} color={theme.text} />
-            <Text style={[styles.editButtonText, { color: theme.text }]}>{t.edit_profile}</Text>
+            <Text style={[styles.editButtonText, { color: theme.text }]}>{t.edit_profile || 'Edit Profile'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -69,36 +137,44 @@ export default function Profile() {
             onPress={() => setActiveTab('posts')}
           >
             <Grid size={20} color={activeTab === 'posts' ? theme.primary : theme.textSecondary} />
+            <Text style={[
+              styles.tabLabel, 
+              { color: activeTab === 'posts' ? theme.primary : theme.textSecondary }
+            ]}>
+              Posts
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.tab, activeTab === 'saved' && { borderBottomColor: theme.primary }]}
             onPress={() => setActiveTab('saved')}
           >
             <Bookmark size={20} color={activeTab === 'saved' ? theme.primary : theme.textSecondary} />
+            <Text style={[
+              styles.tabLabel, 
+              { color: activeTab === 'saved' ? theme.primary : theme.textSecondary }
+            ]}>
+              Saved ({savedPosts.length})
+            </Text>
           </TouchableOpacity>
         </View>
 
         {/* Content */}
         <View style={styles.content}>
-          {activeTab === 'posts' ? (
-            <View style={styles.postsGrid}>
-              {userPosts.map((post, index) => (
-                <TouchableOpacity
-                  key={post.id}
-                  style={styles.postItem}
-                  onPress={() => router.push(`/post/${post.id}`)}
-                >
-                  <Image source={{ uri: post.image }} style={styles.postImage} />
-                </TouchableOpacity>
-              ))}
-            </View>
-          ) : (
-            <View style={styles.emptyState}>
-              <Bookmark size={64} color={theme.textSecondary} />
-              <Text style={[styles.emptyStateText, { color: theme.textSecondary }]}>
-                {t.saved_posts}
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.primary} />
+              <Text style={[styles.loadingText, { color: theme.textSecondary }]}>
+                Loading...
               </Text>
             </View>
+          ) : (
+            <>
+              {activeTab === 'posts' ? (
+                renderPostsGrid(userPosts)
+              ) : (
+                renderPostsGrid(savedPosts)
+              )}
+            </>
           )}
         </View>
       </ScrollView>
@@ -143,6 +219,7 @@ const styles = StyleSheet.create({
   },
   stat: {
     alignItems: 'center',
+    paddingVertical: 4, // Added padding for better touch target
   },
   statNumber: {
     fontSize: 18,
@@ -188,10 +265,27 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  tabLabel: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   content: {
     flex: 1,
     padding: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  loadingText: {
+    fontSize: 16,
+    marginTop: 12,
   },
   postsGrid: {
     flexDirection: 'row',
@@ -201,11 +295,20 @@ const styles = StyleSheet.create({
   postItem: {
     width: '32.66%',
     aspectRatio: 1,
+    position: 'relative',
   },
   postImage: {
     width: '100%',
     height: '100%',
     borderRadius: 4,
+  },
+  savedIndicator: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 12,
+    padding: 4,
   },
   emptyState: {
     flex: 1,
@@ -214,7 +317,14 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyStateText: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '600',
     marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    textAlign: 'center',
+    paddingHorizontal: 32,
   },
 });

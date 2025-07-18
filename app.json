@@ -1,15 +1,16 @@
 {
   "expo": {
-    "name": "NearO",
-    "slug": "nearo-app",
+    "name": "Dealzsta",
+    "slug": "Dealzsta-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "nearo",
+    "scheme": "dealzsta",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kathir1008.Dealzsta"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +22,12 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.kathir1008.Dealzsta",
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "buildToolsVersion": "34.0.0",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -31,18 +37,39 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-location",
-      "expo-camera",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Dealzsta to use your location to find nearby deals.",
+          "locationAlwaysPermission": "Allow Dealzsta to use your location to find nearby deals.",
+          "locationWhenInUsePermission": "Allow Dealzsta to use your location to find nearby deals."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Dealzsta to access your camera to scan barcodes and take photos.",
+          "microphonePermission": "Allow Dealzsta to access your microphone for video recording.",
+          "recordAudioAndroid": true
+        }
+      ],
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash.png",
-          "imageWidth": 200,
+          "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#6C5CE7"
         }
       ],
-      "expo-barcode-scanner"
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow Dealzsta to access camera for barcode scanning."
+        }
+      ],
+      "expo-web-browser",
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
@@ -50,7 +77,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "09c56071-6333-49ec-90fb-793b12f736b0"
+        "projectId": "2329f8dd-9b64-4e3a-9695-2dce3c94f328"
       }
     }
   }

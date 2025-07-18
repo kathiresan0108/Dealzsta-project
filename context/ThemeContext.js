@@ -11,44 +11,46 @@ export const useTheme = () => {
   return context;
 };
 
+// Clean White Theme
 export const lightTheme = {
-  primary: '#6C5CE7',
-  secondary: '#FD79A8',
-  accent: '#FDCB6E',
+  primary: '#5F4B8B',         // iOS red
+  secondary: '#FF9500',       // orange
+  accent: '#FFCC00',          // yellow
   background: '#FFFFFF',
-  surface: '#F8F9FA',
-  text: '#2D3436',
-  textSecondary: '#636E72',
-  border: '#DDD6FE',
-  error: '#E17055',
-  success: '#00B894',
-  warning: '#FDCB6E',
-  like: '#E84393',
-  gradient: ['#6C5CE7', '#A29BFE'],
+  surface: '#F2F2F7',
+  text: '#1C1C1E',
+  textSecondary: '#3A3A3C',
+  border: '#E5E5EA',
+  error: '#FF3B30',
+  success: '#34C759',
+  warning: '#FF9500',
+  like: '#FF375F',
+  gradient: ['#FFFFFF', '#F2F2F7'],
   cardBackground: '#FFFFFF',
   tabBar: '#FFFFFF',
-  tabBarActive: '#6C5CE7',
-  tabBarInactive: '#636E72',
+  tabBarActive: '#FF3B30',
+  tabBarInactive: '#A1A1A1',
 };
 
+// Red & Black Theme
 export const darkTheme = {
-  primary: '#A29BFE',
-  secondary: '#FD79A8',
-  accent: '#FDCB6E',
-  background: '#1A1A1A',
-  surface: '#2D2D2D',
+  primary: '#FF3B30',
+  secondary: '#FF453A',
+  accent: '#FF9F0A',
+  background: '#000000',
+  surface: '#1C1C1E',
   text: '#FFFFFF',
-  textSecondary: '#B2BEC3',
-  border: '#444444',
-  error: '#E17055',
-  success: '#00B894',
-  warning: '#FDCB6E',
-  like: '#E84393',
-  gradient: ['#2D2D2D', '#1A1A1A'],
-  cardBackground: '#2D2D2D',
-  tabBar: '#2D2D2D',
-  tabBarActive: '#A29BFE',
-  tabBarInactive: '#B2BEC3',
+  textSecondary: '#A1A1A1',
+  border: '#2C2C2E',
+  error: '#FF453A',
+  success: '#30D158',
+  warning: '#FFD60A',
+  like: '#FF375F',
+  gradient: ['#1C1C1E', '#000000'],
+  cardBackground: '#1C1C1E',
+  tabBar: '#1C1C1E',
+  tabBarActive: '#FF453A',
+  tabBarInactive: '#A1A1A1',
 };
 
 export const ThemeProvider = ({ children }) => {

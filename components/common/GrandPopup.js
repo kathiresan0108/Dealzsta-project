@@ -1,80 +1,59 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import {
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import { useTheme } from '@/context/ThemeContext';
-import { BlurView } from 'expo-blur';
 
-export default function GrandPopup({ 
-  visible, 
-  title, 
-  message, 
-  buttons = [], 
+const { width } = Dimensions.get('window');
+
+export default function GrandPopup({
+  visible,
+  title,
+  message,
+  buttons = [],
   onDismiss,
-  type = 'info' // 'success', 'error', 'warning', 'info'
+  type = 'default',
 }) {
-  const { theme, isDark } = useTheme();
-
-  const getTypeColors = () => {
-    switch (type) {
-      case 'success':
-        return ['#00B894', '#55EFC4'];
-      case 'error':
-        return ['#E17055', '#FD79A8'];
-      case 'warning':
-        return ['#FDCB6E', '#FFD93D'];
-      default:
-        return theme.gradient;
-    }
-  };
+  const { theme } = useTheme();
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      statusBarTranslucent={true}
-      onRequestClose={onDismiss}
-    >
-      <BlurView intensity={isDark ? 20 : 80} style={styles.overlay}>
-        <View style={styles.container}>
-          <LinearGradient
-            colors={getTypeColors()}
-            style={styles.popup}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <View style={[styles.content, { backgroundColor: theme.cardBackground }]}>
-              {title && (
-                <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
-              )}
-              {message && (
-                <Text style={[styles.message, { color: theme.textSecondary }]}>{message}</Text>
-              )}
-              
-              <View style={styles.buttonContainer}>
-                {buttons.map((button, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.button,
-                      button.style === 'primary' && { backgroundColor: theme.primary },
-                      button.style === 'secondary' && { backgroundColor: 'transparent', borderWidth: 1, borderColor: theme.border }
-                    ]}
-                    onPress={button.onPress}
-                  >
-                    <Text style={[
-                      styles.buttonText,
-                      button.style === 'primary' ? { color: 'white' } : { color: theme.text }
-                    ]}>
-                      {button.text}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </LinearGradient>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
+      <View style={styles.overlay}>
+        <View style={[styles.popup, { backgroundColor: theme.cardBackground }]}>
+          <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
+          {message && <Text style={[styles.message, { color: theme.textSecondary }]}>{message}</Text>}
+
+          {/* Vertical buttons layout */}
+          <View style={styles.buttonColumn}>
+            {buttons.map((btn, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.button,
+                  btn.style === 'primary'
+                    ? { backgroundColor: theme.primary }
+                    : { backgroundColor: theme.surface },
+                ]}
+                onPress={btn.onPress}
+              >
+                <Text
+                  style={{
+                    color: btn.style === 'primary' ? 'white' : theme.text,
+                    fontWeight: '500',
+                  }}
+                >
+                  {btn.text}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </BlurView>
+      </View>
     </Modal>
   );
 }
@@ -82,56 +61,33 @@ export default function GrandPopup({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  container: {
-    width: '85%',
-    maxWidth: 400,
   },
   popup: {
-    borderRadius: 20,
-    padding: 3,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 20,
-  },
-  content: {
-    padding: 24,
-    borderRadius: 17,
-    alignItems: 'center',
+    width: width * 0.9,
+    borderRadius: 16,
+    padding: 20,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
   },
   message: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 22,
+    fontSize: 14,
+    marginBottom: 16,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    width: '100%',
+  buttonColumn: {
+    flexDirection: 'column',
+    gap: 10,
   },
   button: {
-    flex: 1,
     paddingVertical: 12,
-    borderRadius: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginBottom: 10,
     alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

@@ -20,6 +20,7 @@ const translations = {
     messages: 'Messages',
     settings: 'Settings',
     login: 'Login',
+    events: "Events",
     signup: 'Sign Up',
     logout: 'Logout',
     like: 'Like',
@@ -47,7 +48,7 @@ const translations = {
     hide: 'Don\'t show again',
     saved_posts: 'Saved Posts',
     scan_qr: 'Scan QR Code',
-    welcome: 'Welcome to NearO',
+    welcome: 'Welcome to Dealzsta',
     find_deals: 'Find amazing deals near you',
   },
   es: {
@@ -85,7 +86,7 @@ const translations = {
     hide: 'No mostrar de nuevo',
     saved_posts: 'Publicaciones Guardadas',
     scan_qr: 'Escanear Código QR',
-    welcome: 'Bienvenido a NearO',
+    welcome: 'Bienvenido a Dealzsta',
     find_deals: 'Encuentra ofertas increíbles cerca de ti',
   },
   fr: {
@@ -123,7 +124,7 @@ const translations = {
     hide: 'Ne plus afficher',
     saved_posts: 'Publications Sauvegardées',
     scan_qr: 'Scanner le Code QR',
-    welcome: 'Bienvenue sur NearO',
+    welcome: 'Bienvenue sur Dealzsta',
     find_deals: 'Trouvez des offres incroyables près de chez vous',
   },
   de: {
@@ -161,7 +162,7 @@ const translations = {
     hide: 'Nicht mehr anzeigen',
     saved_posts: 'Gespeicherte Beiträge',
     scan_qr: 'QR-Code Scannen',
-    welcome: 'Willkommen bei NearO',
+    welcome: 'Willkommen bei Dealzsta',
     find_deals: 'Finden Sie tolle Angebote in Ihrer Nähe',
   },
   hi: {
@@ -199,7 +200,7 @@ const translations = {
     hide: 'फिर से न दिखाएं',
     saved_posts: 'सेव की गई पोस्ट',
     scan_qr: 'QR कोड स्कैन करें',
-    welcome: 'NearO में आपका स्वागत है',
+    welcome: 'Dealzsta में आपका स्वागत है',
     find_deals: 'अपने पास के बेहतरीन ऑफर खोजें',
   },
 };

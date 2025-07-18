@@ -17,6 +17,7 @@ export default function Settings() {
 
   const languages = {
     en: 'English',
+    ta: 'Tamil',
     es: 'Español',
     fr: 'Français',
     de: 'Deutsch',
@@ -49,7 +50,16 @@ export default function Settings() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={[styles.header, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => {
+            try {
+              router.back();
+            } catch (e) {
+              router.replace('/profile'); // optional fallback
+            }
+          }}
+        >
           <ArrowLeft size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]}>{t.settings}</Text>
@@ -59,7 +69,7 @@ export default function Settings() {
       <ScrollView style={styles.content}>
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>Preferences</Text>
-          
+
           <SettingItem
             icon={<Globe size={20} color={theme.primary} />}
             title={t.change_language}
@@ -91,7 +101,7 @@ export default function Settings() {
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>Account</Text>
-          
+
           <SettingItem
             icon={<User size={20} color={theme.primary} />}
             title="Account Settings"
@@ -117,7 +127,7 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      {/* Language Selection Modal */}
+      {/* Language Modal */}
       <GrandPopup
         visible={showLanguageModal}
         title="Select Language"
@@ -139,7 +149,7 @@ export default function Settings() {
         ]}
       />
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Modal */}
       <GrandPopup
         visible={showLogoutModal}
         title="Logout"
